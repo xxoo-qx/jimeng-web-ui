@@ -16,7 +16,7 @@ const sessionApiKey = ref('')
 // UI state
 const showSaveSuccess = ref(false)
 const showClearConfirm = ref(false)
-const isFetchingFromVideoToArticle = ref(false)
+const isFetchingSession = ref(false)
 const sessionGenerationMessage = ref('')
 const showSessionMessage = ref(false)
 
@@ -107,7 +107,7 @@ function confirmClear() {
 }
 
 async function handleFetchFromEnv() {
-  isFetchingFromVideoToArticle.value = true
+  isFetchingSession.value = true
   sessionGenerationMessage.value = ''
   showSessionMessage.value = false
   try {
@@ -127,7 +127,7 @@ async function handleFetchFromEnv() {
     showSessionMessage.value = true
     setTimeout(() => { showSessionMessage.value = false }, 5000)
   } finally {
-    isFetchingFromVideoToArticle.value = false
+    isFetchingSession.value = false
   }
 }
 </script>
@@ -166,10 +166,10 @@ async function handleFetchFromEnv() {
                 />
                 <BaseButton
                   variant="outline"
-                  :disabled="isFetchingFromVideoToArticle"
+                  :disabled="isFetchingSession"
                   @click="handleFetchFromEnv"
                 >
-                  <span v-if="isFetchingFromVideoToArticle">获取中...</span>
+                  <span v-if="isFetchingSession">获取中...</span>
                   <span v-else>从 API 获取</span>
                 </BaseButton>
               </div>
