@@ -143,10 +143,13 @@ jobs:
         id: pick
         shell: bash
         run: |
+          git fetch --tags --force --prune --prune-tags
           TAG=$(git tag -l 'v*' --sort=-v:refname | head -n 1)
           if [[ -z "$TAG" ]]; then
-            echo "No tags found matching pattern v*"
-            exit 1
+            echo "No v* tags found, will push as latest only (VERSION=0.0.0)"
+            echo "FULL=latest" >> "$GITHUB_OUTPUT"
+            echo "VER=0.0.0" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
           if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Latest tag is '$TAG' but not pure vX.Y.Z. Adjust logic if you want to allow pre-releases."
@@ -216,8 +219,12 @@ jobs:
         run: |
           git fetch --tags --force --prune --prune-tags
           TAG=$(git tag -l 'v*' --sort=-v:refname | head -n 1)
-          if [[ -z "$TAG" ]]; then echo "No tags found"; exit 1; fi
-          echo "FULL=$TAG" >> "$GITHUB_OUTPUT"
+          if [[ -z "$TAG" ]]; then
+            echo "No v* tags found, will push web image as latest only"
+            echo "FULL=latest" >> "$GITHUB_OUTPUT"
+          else
+            echo "FULL=$TAG" >> "$GITHUB_OUTPUT"
+          fi
 
       - uses: docker/setup-qemu-action@v3
 
