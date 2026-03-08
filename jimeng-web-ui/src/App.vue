@@ -100,7 +100,7 @@ function handleKeydown(e: KeyboardEvent) {
             <div class="w-16 h-16 rounded-2xl bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-blue-500/25">
               <img class="w-16 h-16 rounded-2xl" src="@/assets/logo.png" alt="Logo">
             </div>
-            <h1 class="text-xl font-bold text-white">三哥AI</h1>
+            <h1 class="text-xl font-bold text-white">即梦AI</h1>
             <p class="text-sm text-slate-400 mt-1">请输入访问密码以继续</p>
           </div>
 
