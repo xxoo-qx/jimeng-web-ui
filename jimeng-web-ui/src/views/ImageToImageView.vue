@@ -14,7 +14,7 @@ import {
   ImageGallery,
   GenerationProgress
 } from '../components/generation'
-import { getDefaultImageModel } from '../config'
+import { getDefaultImageModel, getAvailableImageModels } from '../config'
 import type { AppError } from '../services/api.service'
 
 interface UploadedImage {
@@ -134,6 +134,11 @@ const ratioConstraintMessage = computed(() => {
 const forcedResolution = computed(() => {
   return modelConstraint.value?.forcedResolution || ''
 })
+
+// 当前区域可用的图片模型 ID，只显示这些
+const allowedImageModelIds = computed(() =>
+  getAvailableImageModels(settingsStore.region).map((m) => m.id)
+)
 
 // 监听区域变化，更新默认模型
 watch(
@@ -297,6 +302,7 @@ async function handleGenerate() {
         :region="settingsStore.region"
         type="image"
         :disabled="isLoading"
+        :allowed-model-ids="allowedImageModelIds"
         @constraint-change="handleConstraintChange"
         @intelligent-ratio-support="handleIntelligentRatioSupport"
       />
@@ -337,12 +343,13 @@ async function handleGenerate() {
         :constraint-message="ratioConstraintMessage"
       />
 
-      <!-- Resolution Selector -->
+      <!-- Resolution Selector：有约束时只显示可用分辨率 -->
       <ResolutionSelector
         v-model="resolution"
         type="image"
         :disabled="isLoading"
         :forced-resolution="forcedResolution"
+        :allowed-resolutions="forcedResolution ? [forcedResolution] : undefined"
       />
 
       <!-- Generate Button -->

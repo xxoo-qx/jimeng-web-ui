@@ -8,6 +8,8 @@ interface Props {
   label?: string
   disabled?: boolean
   forcedResolution?: string
+  /** 当前模型+区域下可用的分辨率，不传则显示全部 */
+  allowedResolutions?: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -15,7 +17,8 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'image',
   label: '分辨率',
   disabled: false,
-  forcedResolution: ''
+  forcedResolution: '',
+  allowedResolutions: undefined
 })
 
 const emit = defineEmits<{
@@ -23,7 +26,11 @@ const emit = defineEmits<{
 }>()
 
 const resolutionOptions = computed<ResolutionOption[]>(() => {
-  return props.type === 'video' ? VIDEO_RESOLUTIONS : IMAGE_RESOLUTIONS
+  const base = props.type === 'video' ? VIDEO_RESOLUTIONS : IMAGE_RESOLUTIONS
+  if (props.allowedResolutions?.length) {
+    return base.filter((o) => props.allowedResolutions!.includes(o.value))
+  }
+  return base
 })
 
 const isDisabled = computed(() => props.disabled || !!props.forcedResolution)
@@ -40,9 +47,9 @@ const handleSelect = (value: string) => {
   <div class="w-full">
     <label v-if="label" class="block mb-2 text-sm font-medium text-gray-700">
       {{ label }}
-      <span v-if="forcedResolution" class="text-yellow-600 ml-1">(已锁定为 {{ forcedResolution.toUpperCase() }})</span>
+      <span v-if="forcedResolution && resolutionOptions.length > 1" class="text-yellow-600 ml-1">(已锁定为 {{ forcedResolution.toUpperCase() }})</span>
     </label>
-    
+
     <div class="grid grid-cols-3 gap-2">
       <button
         v-for="resolution in resolutionOptions"

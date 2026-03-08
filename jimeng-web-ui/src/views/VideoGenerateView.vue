@@ -14,7 +14,7 @@ import {
   VideoPlayer,
   GenerationProgress
 } from '../components/generation'
-import { getModelDurationOptions, modelSupportsResolution, getDefaultVideoModel } from '../config'
+import { getModelDurationOptions, modelSupportsResolution, getDefaultVideoModel, getAvailableVideoModels } from '../config'
 import type { AppError } from '../services/api.service'
 
 interface UploadedImage {
@@ -133,6 +133,11 @@ watch(model, (newModel) => {
 const currentModelSupportsResolution = computed(() => {
   return modelSupportsResolution(model.value)
 })
+
+// 当前区域可用的视频模型 ID，只显示这些
+const allowedVideoModelIds = computed(() =>
+  getAvailableVideoModels(settingsStore.region).map((m) => m.id)
+)
 
 // 当前类型的状态
 const taskState = computed(() => generationStore.videoState)
@@ -324,6 +329,7 @@ async function handleGenerate() {
         type="video"
         :region="settingsStore.region"
         :disabled="isLoading"
+        :allowed-model-ids="allowedVideoModelIds"
       />
 
       <!-- Ratio Selector -->

@@ -17,6 +17,8 @@ interface Props {
   type?: 'image' | 'video'
   label?: string
   disabled?: boolean
+  /** 当前区域可用的模型 ID，不传则按 region 自动过滤 */
+  allowedModelIds?: string[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,7 +26,8 @@ const props = withDefaults(defineProps<Props>(), {
   region: 'cn',
   type: 'image',
   label: '模型',
-  disabled: false
+  disabled: false,
+  allowedModelIds: undefined
 })
 
 const emit = defineEmits<{
@@ -40,8 +43,17 @@ const availableModels = computed<ModelInfo[]>(() => {
     : getAvailableImageModels(props.region)
 })
 
+// 仅显示可用的模型：有 allowedModelIds 时只显示列表中的项
+const displayModels = computed<ModelInfo[]>(() => {
+  const list = availableModels.value
+  if (props.allowedModelIds?.length) {
+    return list.filter((m) => props.allowedModelIds!.includes(m.id))
+  }
+  return list
+})
+
 const selectedModel = computed(() => {
-  return availableModels.value.find(m => m.id === props.modelValue)
+  return displayModels.value.find(m => m.id === props.modelValue)
 })
 
 // 当前模型的分辨率约束
@@ -59,7 +71,7 @@ const currentSupportsIntelligentRatio = computed(() => {
 watch(
   () => props.region,
   (newRegion) => {
-    const currentModelAvailable = availableModels.value.some(m => m.id === props.modelValue)
+    const currentModelAvailable = displayModels.value.some(m => m.id === props.modelValue)
     if (!currentModelAvailable) {
       const defaultModel = props.type === 'video'
         ? getDefaultVideoModel(newRegion)
@@ -136,7 +148,7 @@ function getSpecialTag(model: ModelInfo): string | null {
     
     <div class="space-y-2">
       <button
-        v-for="model in availableModels"
+        v-for="model in displayModels"
         :key="model.id"
         type="button"
         :disabled="disabled"
