@@ -48,7 +48,7 @@ class ApiService {
 
   constructor() {
     this.axiosInstance = axios.create({
-      timeout: 900000, // 15 minutes - matches backend polling timeout
+      timeout: 900000, // 15 分钟，与 API 轮询超时一致 (TIMEOUT_SECONDS: 900)
     })
 
     this.setupInterceptors()
