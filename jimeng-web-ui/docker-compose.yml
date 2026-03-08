@@ -1,0 +1,13 @@
+# jimeng-web-ui 单独运行（不启动 jimeng-api）
+# 使用外部 API 时在页面「设置」中填写「API 基础地址」
+services:
+  jimeng-web-ui:
+    container_name: jimeng-web-ui
+    build:
+      context: .
+      dockerfile: Dockerfile.standalone
+      args:
+        VITE_ACCESS_PASSWORD: ${ACCESS_PASSWORD:-}
+    restart: unless-stopped
+    ports:
+      - "9901:80"
