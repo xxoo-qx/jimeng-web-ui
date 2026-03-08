@@ -41,6 +41,8 @@ export interface RatioOption {
 }
 
 // ==================== 图像生成模型 ====================
+// 美区分辨率规则（与 iptag/jimeng-api 文档一致）：美区避免 1k 触发 invalid parameter，统一强制 2k；nanobanana 美区固定 1024×1024 且忽略 ratio；港/日/新仅 nanobanana 强制 1k。
+// 文生图与图生图共用本配置，无需单独适配。
 export const IMAGE_MODELS: ModelInfo[] = [
   // ⚠️ 暂时禁用：调用该模型会报服务器处理失败
   // {
@@ -49,7 +51,8 @@ export const IMAGE_MODELS: ModelInfo[] = [
   //   description: '最新版本，支持2k/4k全部比例及智能比例',
   //   regions: ['cn', 'us', 'hk', 'jp', 'sg'],
   //   type: 'image',
-  //   supportsIntelligentRatio: true
+  //   supportsIntelligentRatio: true,
+  //   resolutionConstraints: [{ forcedResolution: '2k', ignoreRatio: false, regions: ['us'] }]
   // },
   {
     id: 'jimeng-4.1',
@@ -57,7 +60,8 @@ export const IMAGE_MODELS: ModelInfo[] = [
     description: '支持2k/4k全部比例及智能比例，全站通用',
     regions: ['cn', 'us', 'hk', 'jp', 'sg'],
     type: 'image',
-    supportsIntelligentRatio: true
+    supportsIntelligentRatio: true,
+    resolutionConstraints: [{ forcedResolution: '2k', ignoreRatio: false, regions: ['us'] }]
   },
   {
     id: 'jimeng-4.0',
@@ -65,7 +69,8 @@ export const IMAGE_MODELS: ModelInfo[] = [
     description: '稳定版本，国内外通用',
     regions: ['cn', 'us', 'hk', 'jp', 'sg'],
     type: 'image',
-    supportsIntelligentRatio: true
+    supportsIntelligentRatio: true,
+    resolutionConstraints: [{ forcedResolution: '2k', ignoreRatio: false, regions: ['us'] }]
   },
   {
     id: 'jimeng-3.1',
@@ -79,7 +84,8 @@ export const IMAGE_MODELS: ModelInfo[] = [
     name: 'Jimeng 3.0',
     description: '经典版本，国内外通用',
     regions: ['cn', 'us', 'hk', 'jp', 'sg'],
-    type: 'image'
+    type: 'image',
+    resolutionConstraints: [{ forcedResolution: '2k', ignoreRatio: false, regions: ['us'] }]
   },
   {
     id: 'jimeng-2.1',
@@ -93,14 +99,16 @@ export const IMAGE_MODELS: ModelInfo[] = [
     name: 'Jimeng XL Pro',
     description: '超大模型，适合复杂场景',
     regions: ['cn', 'us', 'hk', 'jp', 'sg'],
-    type: 'image'
+    type: 'image',
+    resolutionConstraints: [{ forcedResolution: '2k', ignoreRatio: false, regions: ['us'] }]
   },
   {
     id: 'nanobananapro',
     name: 'Nanobanana Pro',
     description: '国际站专属，支持ratio和resolution参数',
     regions: ['us', 'hk', 'jp', 'sg'],
-    type: 'image'
+    type: 'image',
+    resolutionConstraints: [{ forcedResolution: '2k', ignoreRatio: false, regions: ['us'] }]
   },
   {
     id: 'nanobanana',
@@ -109,18 +117,8 @@ export const IMAGE_MODELS: ModelInfo[] = [
     regions: ['us', 'hk', 'jp', 'sg'],
     type: 'image',
     resolutionConstraints: [
-      {
-        // 美国站：固定分辨率，忽略 ratio
-        forcedResolution: '2k',
-        ignoreRatio: true,
-        regions: ['us']
-      },
-      {
-        // 港/日/新：强制 1k，但支持自定义 ratio
-        forcedResolution: '1k',
-        ignoreRatio: false,
-        regions: ['hk', 'jp', 'sg']
-      }
+      { forcedResolution: '2k', ignoreRatio: true, regions: ['us'] },
+      { forcedResolution: '1k', ignoreRatio: false, regions: ['hk', 'jp', 'sg'] }
     ]
   }
 ]
