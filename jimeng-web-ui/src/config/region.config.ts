@@ -44,16 +44,15 @@ export interface RatioOption {
 // 美区分辨率规则（与 iptag/jimeng-api 文档一致）：美区避免 1k 触发 invalid parameter，统一强制 2k；nanobanana 美区固定 1024×1024 且忽略 ratio；港/日/新仅 nanobanana 强制 1k。
 // 文生图与图生图共用本配置，无需单独适配。
 export const IMAGE_MODELS: ModelInfo[] = [
-  // ⚠️ 暂时禁用：调用该模型会报服务器处理失败
-  // {
-  //   id: 'jimeng-4.5',
-  //   name: 'Jimeng 4.5',
-  //   description: '最新版本，支持2k/4k全部比例及智能比例',
-  //   regions: ['cn', 'us', 'hk', 'jp', 'sg'],
-  //   type: 'image',
-  //   supportsIntelligentRatio: true,
-  //   resolutionConstraints: [{ forcedResolution: '2k', ignoreRatio: false, regions: ['us'] }]
-  // },
+  {
+    id: 'jimeng-4.5',
+    name: 'Jimeng 4.5',
+    description: '最新版本，支持2k/4k全部比例及智能比例',
+    regions: ['cn', 'us', 'hk', 'jp', 'sg'],
+    type: 'image',
+    supportsIntelligentRatio: true,
+    resolutionConstraints: [{ forcedResolution: '2k', ignoreRatio: false, regions: ['us'] }]
+  },
   {
     id: 'jimeng-4.1',
     name: 'Jimeng 4.1',
@@ -143,16 +142,15 @@ export const VIDEO_MODELS: ModelInfo[] = [
     durationOptions: [5, 10, 15],
     supportsResolution: false
   },
-  // ⚠️ 暂时禁用：调用该模型会报服务器处理失败
-  // {
-  //   id: 'jimeng-video-3.5-pro',
-  //   name: 'Jimeng Video 3.5 Pro',
-  //   description: '专业版 v3.5，全站通用（默认）',
-  //   regions: ['cn', 'us', 'hk', 'jp', 'sg'],
-  //   type: 'video',
-  //   durationOptions: [5, 10, 12],
-  //   supportsResolution: false
-  // },
+  {
+    id: 'jimeng-video-3.5-pro',
+    name: 'Jimeng Video 3.5 Pro',
+    description: '专业版 v3.5，全站通用',
+    regions: ['cn', 'us', 'hk', 'jp', 'sg'],
+    type: 'video',
+    durationOptions: [5, 10, 12],
+    supportsResolution: false
+  },
   {
     id: 'jimeng-video-veo3',
     name: 'Veo3',
@@ -269,13 +267,12 @@ export const DEFAULT_IMAGE_MODEL: Record<Region, string> = {
   sg: 'jimeng-3.0'
 }
 
-// 默认视频模型改为 jimeng-video-3.5-pro（README 标记为 Default）
 export const DEFAULT_VIDEO_MODEL: Record<Region, string> = {
-  cn: 'jimeng-video-3.0',
-  us: 'jimeng-video-3.0',
-  hk: 'jimeng-video-3.0',
-  jp: 'jimeng-video-3.0',
-  sg: 'jimeng-video-3.0'
+  cn: 'jimeng-video-3.5-pro',
+  us: 'jimeng-video-3.5-pro',
+  hk: 'jimeng-video-3.5-pro',
+  jp: 'jimeng-video-3.5-pro',
+  sg: 'jimeng-video-3.5-pro'
 }
 
 // ==================== 工具函数 ====================
