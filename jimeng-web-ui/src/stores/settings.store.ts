@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Region } from '../types'
-import { formatAuthHeader } from '../utils/region-prefix'
+import { formatAuthHeader, stripRegionPrefix } from '../utils/region-prefix'
 import { apiService } from '../services/api.service'
 
 const STORAGE_KEY = 'jimeng_settings'
@@ -29,8 +29,9 @@ export const useSettingsStore = defineStore('settings', () => {
 
   const formattedSessionId = computed(() => {
     if (!sessionId.value) return ''
+    const raw = stripRegionPrefix(sessionId.value)
     const prefix = region.value === 'cn' ? '' : `${region.value}-`
-    return `${prefix}${sessionId.value}`
+    return `${prefix}${raw}`
   })
 
   const authHeader = computed(() => {
@@ -131,8 +132,11 @@ export const useSettingsStore = defineStore('settings', () => {
         return { success: false, message: result.message || '接口未返回 Session ID' }
       }
       sessionId.value = result.sessionId
+      // Dreamina-Token-Manager 等账号为美区，session 只在 dreamina.capcut.com 有效；
+      // 若区域为国内站会走 jimeng.jianying.com，即梦会返回 check login error
+      region.value = 'us'
       saveToStorage()
-      return { success: true, message: result.message || '已获取 Session ID' }
+      return { success: true, message: result.message || '已获取 Session ID，并已切换为美区' }
     } catch (error: any) {
       const msg = error.response?.data?.message || error.message || '请求失败，请检查 API 地址与网络'
       return { success: false, message: msg }

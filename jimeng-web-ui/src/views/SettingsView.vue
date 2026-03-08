@@ -160,6 +160,7 @@ async function handleFetchFromEnv() {
     showSessionMessage.value = true
     if (result.success) {
       sessionId.value = settingsStore.sessionId
+      region.value = settingsStore.region
       setTimeout(() => { showSessionMessage.value = false }, 3000)
     } else {
       setTimeout(() => { showSessionMessage.value = false }, 5000)
