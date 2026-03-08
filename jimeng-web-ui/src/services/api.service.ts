@@ -377,15 +377,16 @@ class ApiService {
       }
     }
 
-    // 格式 2：Dreamina-Token-Manager getAllAccounts → { data: [ { sessionid, disabled } ] }
+    // 格式 2：{ data: [ { sessionid[, disabled] } ] }，从可用账号中随机取一个
     const list = data.data
     if (Array.isArray(list) && list.length > 0) {
-      const account = list.find((a: any) => !a.disabled) ?? list[0]
+      const usable = list.filter((a: any) => !a.disabled)
+      const pool = usable.length > 0 ? usable : list
+      const account = pool[Math.floor(Math.random() * pool.length)]
       let sid = account.sessionid ?? account.sessionId
       if (typeof sid === 'string' && sid) {
-        // 去掉已有区域前缀，避免前端再加一次变成 us-us-xxx 导致即梦 check login error
         sid = sid.replace(/^(us|hk|jp|sg)-/i, '')
-        return { sessionId: sid, message: '已从 Dreamina-Token-Manager 获取' }
+        return { sessionId: sid, message: '已从 API 获取' }
       }
     }
 

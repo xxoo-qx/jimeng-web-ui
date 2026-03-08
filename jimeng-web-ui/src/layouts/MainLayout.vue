@@ -10,9 +10,6 @@ const settingsStore = useSettingsStore()
 const creditStore = useCreditStore()
 const sidebarOpen = ref(false)
 const showSettingsModal = ref(false)
-const isGeneratingSession = ref(false)
-const sessionGenerationMessage = ref('')
-const showSessionMessage = ref(false)
 
 function toggleSidebar() {
   sidebarOpen.value = !sidebarOpen.value
@@ -30,57 +27,16 @@ function closeSettings() {
   showSettingsModal.value = false
 }
 
-async function handleGenerateSession() {
-  isGeneratingSession.value = true
-  sessionGenerationMessage.value = ''
-  showSessionMessage.value = false
-
-  try {
-    const result = await settingsStore.generateNewSession()
-    
-    if (result.success) {
-      sessionGenerationMessage.value = result.message
-      showSessionMessage.value = true
-      
-      // Auto-hide success message after 3 seconds
-      setTimeout(() => {
-        showSessionMessage.value = false
-      }, 3000)
-    } else {
-      sessionGenerationMessage.value = result.message
-      showSessionMessage.value = true
-      
-      // Auto-hide error message after 5 seconds
-      setTimeout(() => {
-        showSessionMessage.value = false
-      }, 5000)
-    }
-  } catch (error: any) {
-    sessionGenerationMessage.value = error.message || 'Session ID 生成失败'
-    showSessionMessage.value = true
-    
-    setTimeout(() => {
-      showSessionMessage.value = false
-    }, 5000)
-  } finally {
-    isGeneratingSession.value = false
-  }
-}
-
 onMounted(() => {
   settingsStore.loadFromStorage()
-  
-  // Show settings modal if not configured
-  if (!settingsStore.isConfigured) {
-    showSettingsModal.value = true
-  } else {
-    // 配置API服务
+
+  // 已取消首次访问自动弹出设置弹窗，用户可通过页头/侧栏自行打开设置
+  if (settingsStore.isConfigured) {
     apiService.setConfig({
       baseUrl: settingsStore.apiBaseUrl,
       sessionId: settingsStore.sessionId,
       region: settingsStore.region
     })
-    // 获取积分
     creditStore.fetchCredit()
   }
 })
@@ -170,40 +126,8 @@ watch(
                   placeholder="Enter your Session ID"
                 />
                 
-                <!-- Generate Session Button (仅美区可用) -->
-                <div v-if="settingsStore.region === 'us'">
-                  <button
-                    type="button"
-                    :disabled="isGeneratingSession"
-                    @click="handleGenerateSession"
-                    class="w-full px-4 mb-2 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <span v-if="isGeneratingSession">生成中...</span>
-                    <span v-else>🔄 自动获取 Session ID</span>
-                  </button>
-                  
-                  <!-- Session Generation Message -->
-                  <Transition name="fade">
-                    <div v-if="showSessionMessage">
-                      <p :class="[
-                        'text-xs px-3 py-2 rounded-lg',
-                        sessionGenerationMessage.includes('成功') 
-                          ? 'text-green-700 bg-green-50 border border-green-200' 
-                          : 'text-red-700 bg-red-50 border border-red-200'
-                      ]">
-                        {{ sessionGenerationMessage }}
-                      </p>
-                    </div>
-                  </Transition>
-                  
-                  <p class="text-xs text-gray-500">
-                    点击按钮自动注册美区账号并获取 Session ID（需美国代理节点），或手动输入
-                  </p>
-                </div>
-                
-                <!-- 非美区提示 -->
-                <p v-else class="text-xs text-gray-500">
-                  请手动输入 Session ID（自动获取功能仅支持美区）
+                <p class="text-xs text-gray-500">
+                  请手动输入 Session ID，或在设置页使用「从 API 获取」
                 </p>
               </div>
 
