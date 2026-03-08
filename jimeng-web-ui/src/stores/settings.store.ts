@@ -120,7 +120,7 @@ export const useSettingsStore = defineStore('settings', () => {
   }
 
   /** 从用户填写的 Session 获取 API 地址拉取 SessionID */
-  async fetchSessionFromApi(): Promise<{ success: boolean; message: string }> {
+  async function fetchSessionFromApi(): Promise<{ success: boolean; message: string }> {
     try {
       const url = sessionApiUrl.value.trim()
       if (!url) {
