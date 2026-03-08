@@ -6,8 +6,11 @@ import { apiService } from '../services/api.service'
 
 const STORAGE_KEY = 'jimeng_settings'
 
-// 默认 API 地址：使用当前页面 origin（兼容 Nginx 反向代理统一入口部署）
-const DEFAULT_API_BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5100'
+// 默认 API 地址：当前访问的主机 + 端口 5100（jimeng-api 常用端口）；同机多端口访问时不会错成前端端口
+const DEFAULT_API_BASE_URL =
+  typeof window !== 'undefined'
+    ? `${window.location.protocol}//${window.location.hostname}:5100`
+    : 'http://localhost:5100'
 interface StoredSettings {
   apiBaseUrl: string
   sessionId: string
